@@ -25,3 +25,9 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.log
+
+# MATLAB generated files and analysis exports
+*.asv
+slprj/
+output/*
+!output/.gitkeep

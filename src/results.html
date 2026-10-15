@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><style>
+:root{color-scheme:light dark;--bg:Canvas;--fg:CanvasText;--line:GrayText;--header:Canvas}html,body{height:100%;overflow:hidden}body{margin:0;display:flex;flex-direction:column;font:13px Arial,sans-serif;color:var(--fg);background:var(--bg)}table{border-collapse:separate;border-spacing:0;width:100%}th,td{padding:11px 14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);white-space:nowrap;text-align:center}th{position:sticky;top:0;background:var(--header);cursor:help;font-weight:600}#empty{padding:24px;color:var(--fg)}#hint,#notice{flex:none;padding:10px;background:var(--bg);border-bottom:1px solid var(--line);white-space:normal;overflow-wrap:anywhere;max-height:30vh;overflow-y:auto}#notice:empty{display:none}#view{flex:1;min-height:0;min-width:0;overflow:auto}
+</style></head><body><div id="hint">Hover over a column name for its meaning and units.</div><div id="notice" role="status"></div><div id="view"></div><script>
+function setup(component){
+function render(){const data=component.Data||{},view=document.getElementById('view');view.replaceChildren();
+if(data.theme){Object.entries(data.theme).forEach(([key,value])=>{const names={background:'--bg',foreground:'--fg',line:'--line',header:'--header'};if(names[key])document.documentElement.style.setProperty(names[key],'rgb('+value.map(x=>Math.round(x*255)).join(',')+')');});}
+document.getElementById('notice').textContent=data.message||'';
+document.getElementById('hint').textContent='Hover over a column name for its meaning and units.';
+if(!data.columns||!data.columns.length){const p=document.createElement('p');p.id='empty';p.textContent='Run Analyze to view results.';view.appendChild(p);return;}
+const table=document.createElement('table'),head=document.createElement('thead'),tr=document.createElement('tr');
+data.columns.forEach((name,i)=>{const th=document.createElement('th');th.textContent=name;th.title=(data.tips||[])[i]||name;th.tabIndex=0;const explain=()=>document.getElementById('hint').textContent=name+': '+th.title;th.addEventListener('focus',explain);th.addEventListener('mouseenter',explain);th.addEventListener('click',explain);tr.appendChild(th);});head.appendChild(tr);table.appendChild(head);
+const body=document.createElement('tbody');(data.rows||[]).forEach(row=>{const tr=document.createElement('tr');row.forEach(value=>{const td=document.createElement('td');td.textContent=value===null?'NaN':String(value);tr.appendChild(td);});body.appendChild(tr);});table.appendChild(body);view.appendChild(table);}
+component.addEventListener('DataChanged',render);render();}
+</script></body></html>
